@@ -1,5 +1,7 @@
 ﻿using System.Threading;
 using System;
+using Listsoft.Lab_Tracer.Writer;
+using Listsoft.Lab_Tracer.Serilization;
 
 namespace Listsoft
 {
@@ -75,6 +77,7 @@ namespace Listsoft
                 static void Main(string[] args)
                 {
                     ITracer tracer = new Tracer();
+                    WriterBridge writerBridge = new WriterBridge();
                     new FirstClass(tracer).Test();
                     new FirstClass(tracer).Single();
                     Thread thread1 = new Thread(() => new FirstClass(tracer).Single());
@@ -85,6 +88,7 @@ namespace Listsoft
                     thread2.Join();
                     thread1.Join();
                     TraceResult traceResult = tracer.GetTraceResult();
+                    Console.WriteLine();
                     ThreadInfo ti;
                     ti = traceResult.threads[Thread.CurrentThread.ManagedThreadId];
                     Console.WriteLine("Main Thread {0} Elapsed time:{1}ms", Thread.CurrentThread.ManagedThreadId, ti.time);
@@ -92,6 +96,13 @@ namespace Listsoft
                     Console.WriteLine("Thread {0} Elapsed time:{1}ms", thread1.ManagedThreadId, ti.time);
                     ti = traceResult.threads[thread2.ManagedThreadId];
                     Console.WriteLine("Thread {0} Elapsed time:{1}ms", thread2.ManagedThreadId, ti.time, ti.time);
+                    Console.WriteLine();
+                    writerBridge.SetIntarface(new ConsoleWriter());
+                    writerBridge.Write(new JsonSerializer(), traceResult);
+                    writerBridge.Write(new XmlSerializer(), traceResult);
+                    writerBridge.SetIntarface(new FileWriter());
+                    writerBridge.Write(new JsonSerializer(),traceResult);
+                    writerBridge.Write(new XmlSerializer(), traceResult);
                     Console.ReadLine();
                 }
             }

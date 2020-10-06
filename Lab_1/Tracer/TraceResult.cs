@@ -22,5 +22,11 @@ namespace Listsoft
             public ConcurrentDictionary<int, ThreadInfo> threads =
                 new ConcurrentDictionary<int, ThreadInfo>();
         }
+        public class ThreadItem
+        {
+            public string id;
+            public string time;
+            public List<MethodInfo> methods = new List<MethodInfo>();
+        }
     }
 }
