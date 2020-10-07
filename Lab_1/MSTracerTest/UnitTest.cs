@@ -39,6 +39,10 @@ namespace Listsoft
                     ThreadInfo threadInfo;
                     traceResult.threads.TryGetValue(threadId, out threadInfo);
                     long countedTime = threadInfo.methods[0].time;
+                    Assert.AreEqual(nameof(SingleMethod), threadInfo.methods[0].name);
+                    Assert.AreEqual(nameof(TracerTest), threadInfo.methods[0].className);
+                    Assert.AreEqual(0, threadInfo.methods[0].methods.Count);
+                    Assert.IsTrue(countedTime >= SLEEP_TIME);
                 }
 
                 [TestMethod]
@@ -50,18 +54,21 @@ namespace Listsoft
                     ThreadInfo threadInfo;
                     traceResult.threads.TryGetValue(threadId, out threadInfo);
                     long countedTime = threadInfo.methods[0].time;
+                    Assert.AreEqual(1, threadInfo.methods[0].methods.Count);
+                    Assert.AreEqual(0, threadInfo.methods[0].methods[0].methods.Count);
+                    Assert.AreEqual(nameof(MethodWithInnerMethod), threadInfo.methods[0].name);
+                    Assert.AreEqual(nameof(SingleMethod), threadInfo.methods[0].methods[0].name);
                 }
 
                 [TestMethod]
                 public void TestSingleMethodInMultiThreads()
                 {
                     var threads = new List<Thread>();
-                    double expectedTotalElapsedTime = 0;
+                    long expectedTotalElapsedTime = THREADS_COUNT * SLEEP_TIME;
                     for (int i = 0; i < THREADS_COUNT; i++)
                     {
                         var newThread = new Thread(SingleMethod);
                         threads.Add(newThread);
-                        expectedTotalElapsedTime += SLEEP_TIME;
                     }
                     foreach (var thread in threads)
                     {
@@ -71,13 +78,13 @@ namespace Listsoft
                     {
                         thread.Join();
                     }
-                    double actualTotalElapsedTime = 0;
+                    long actualTotalElapsedTime = 0;
                     foreach (var threadItem in tracer.GetTraceResult().threads)
                     {                       
-                        long countedTime = threadItem.Value.time;
-                        actualTotalElapsedTime += countedTime;
+                        actualTotalElapsedTime += threadItem.Value.time; 
                     }
-
+                    Assert.AreEqual(THREADS_COUNT, tracer.GetTraceResult().threads.Count);
+                    Assert.IsTrue(actualTotalElapsedTime >= expectedTotalElapsedTime);
                 }
             }
         }
