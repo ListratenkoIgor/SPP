@@ -17,7 +17,7 @@ namespace Listsoft
                 {
                     this.tracer = tracer;
                 }
-                public void Test()
+                public void WithInner()
                 {
                     tracer.StartTrace();
                     for (int i = 0; i < 50000000; i++)
@@ -71,14 +71,14 @@ namespace Listsoft
             {
                 static void ThreadExample(ITracer tracer)
                 {
-                    new FirstClass(tracer).Test();
+                    new FirstClass(tracer).WithInner();
                     new SecondClass(tracer).Requrse(7);
                 }
                 static void Main(string[] args)
                 {
                     ITracer tracer = new Tracer();
                     WriterBridge writerBridge = new WriterBridge();
-                    new FirstClass(tracer).Test();
+                    new FirstClass(tracer).WithInner();
                     new FirstClass(tracer).Single();
                     Thread thread1 = new Thread(() => new FirstClass(tracer).Single());
                     Thread thread2 = new Thread(() => ThreadExample(tracer));

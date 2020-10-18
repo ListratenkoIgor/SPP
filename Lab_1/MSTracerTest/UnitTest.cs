@@ -1,6 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Threading;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Listsoft
 {
@@ -80,8 +80,8 @@ namespace Listsoft
                     }
                     long actualTotalElapsedTime = 0;
                     foreach (var threadItem in tracer.GetTraceResult().threads)
-                    {                       
-                        actualTotalElapsedTime += threadItem.Value.time; 
+                    {
+                        actualTotalElapsedTime += threadItem.Value.time;
                     }
                     Assert.AreEqual(THREADS_COUNT, tracer.GetTraceResult().threads.Count);
                     Assert.IsTrue(actualTotalElapsedTime >= expectedTotalElapsedTime);
